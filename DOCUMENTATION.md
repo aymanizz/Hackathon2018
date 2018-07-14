@@ -29,3 +29,20 @@
     flask run
     ```
 3. Open a browser and enter the url: `localhost:5000`
+
+## Main Idea and Concept
+
+We tackled challenge 3 by creating an feeds/events based system.
+For students, each has, by default, a single private feed he can edit
+and add events to, students are also able to view professors feeds and
+subscribe to them as they wish.
+Unlike students, professors can create many public feeds, which students
+can subscribe to.
+
+The feeds are delivered in a calendar form, so that students can see all
+upcoming events (announcements, news, etc) from all feeds seemlessly.
+
+## Future Work
+
+The system is far from complete, we could add private messages,
+public and private feeds, forums, and many more features.
