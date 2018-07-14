@@ -69,7 +69,7 @@ def user(username):
 
 @app.route('/user/')
 @login_required
-def profile(username):
+def profile():
     return redirect(url_for('user', username=current_user.username))
 
 @app.route('/user/edit', methods=['GET', 'POST'])
@@ -92,14 +92,27 @@ def edit_profile():
 @login_required
 def subscribe(feed_id):
 	feed = Feed.query.filter_by(id=feed_id).first_or_404()
-	username = User.query.filter_by(id=feed.owner_id).first()
-	if username == current_user.id:
-		flash('You are subscribed to your feeds by default.')
-		return redirect(url_for('user', username=username))
+	user = User.query.filter_by(id=feed.owner_id).first()
+	if user.id == current_user.id:
+		flash('You are subscribed to your feeds by default')
+		return redirect(url_for('user', user=user))
 	current_user.subscribe(feed)
 	db.session.commit()
-	flash('You have been subscribed to {}!'.format(feed.name))
-	return redirect(url_for('user', username=username))
+	flash('You have subscribed to {} feed'.format(feed.name))
+	return redirect(url_for('user', user=user))
+
+@app.route('/unsubscribe/<feed_id>')
+@login_required
+def unsubscribe(feed_id):
+	feed = Feed.query.filter_by(id=feed_id).first_or_404()
+	user = User.query.filter_by(id=feed.owner_id).first()
+	if user.id == current_user.id:
+		flash('You cannot unfollow yourself!')
+		return redirect(url_for('user', user=user))
+	current_user.unsubscribe(feed)
+	db.session.commit()
+	flash('You have unsubscribed from {} feed.'.format(feed.name))
+	return redirect(url_for('user', user=user))
 
 @app.before_request
 def update_last_seen():

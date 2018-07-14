@@ -32,7 +32,7 @@ class User(UserMixin, db.Model):
 		primaryjoin=(subscribers.c.subscriber_id == id),
 		secondaryjoin=(subscribers.c.feed_id == Feed.id),
 		backref=db.backref('subscribers', lazy='dynamic'), lazy='dynamic')
-	
+
 	def set_password(self, new_password):
 		self.password_hash = generate_password_hash(new_password)
 
