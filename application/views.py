@@ -69,7 +69,7 @@ def user(username):
 
 @app.route('/user/')
 @login_required
-def user(username):
+def profile(username):
     return redirect(url_for('user', username=current_user.username))
 
 @app.route('/user/edit', methods=['GET', 'POST'])
@@ -87,6 +87,19 @@ def edit_profile():
 		form.about_me.data = current_user.about_me
 	return render_template(
 		'edit_profile.html', title='Edit Profile', form=form)
+
+@app.route('/subscribe/<feed_id>')
+@login_required
+def subscribe(feed_id):
+	feed = Feed.query.filter_by(id=feed_id).first_or_404()
+	username = User.query.filter_by(id=feed.owner_id).first()
+	if username == current_user.id:
+		flash('You are subscribed to your feeds by default.')
+		return redirect(url_for('user', username=username))
+	current_user.subscribe(feed)
+	db.session.commit()
+	flash('You have been subscribed to {}!'.format(feed.name))
+	return redirect(url_for('user', username=username))
 
 @app.before_request
 def update_last_seen():
