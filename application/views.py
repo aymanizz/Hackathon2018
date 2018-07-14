@@ -7,8 +7,9 @@ from flask import (
 	request, session, render_template, redirect, url_for, flash)
 
 from . import app, db
-from .forms import LoginForm, RegistrationForm, EditProfileForm
-from .models import User, Feed
+from .models import User, Feed, Event
+from .forms import (
+	LoginForm, RegistrationForm, EditProfileForm, CreateFeedForm)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -24,11 +25,6 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-		# TODO:
-		# [x] verify the login
-		# [x] get the user id from the database
-		# [ ] register the user id, name, photo, etc in the current session
-		# [x] redirect to user page
 	form = LoginForm()
 	if form.validate_on_submit():
 		user = User.query.filter_by(username=form.username.data).first()
@@ -53,7 +49,7 @@ def register():
 		return redirect(url_for('index'))
 	form = RegistrationForm()
 	if form.validate_on_submit():
-		user = User(username=form.username.data, email=form.email.data)
+		user = User(username=form.username.data, email=form.email.data, type='Professor')
 		user.set_password(form.password.data)
 		db.session.add(user)
 		db.session.commit()
@@ -108,11 +104,57 @@ def unsubscribe(feed_id):
 	user = User.query.filter_by(id=feed.owner_id).first()
 	if user.id == current_user.id:
 		flash('You cannot unfollow yourself!')
-		return redirect(url_for('user', user=user))
+		return redirect(url_for('feeds', user=user))
 	current_user.unsubscribe(feed)
 	db.session.commit()
 	flash('You have unsubscribed from {} feed.'.format(feed.name))
-	return redirect(url_for('user', user=user))
+	return redirect(url_for('feeds', user=user))
+
+@app.route('/user/<username>/feeds', methods=['GET', 'POST'])
+@login_required
+def feeds(username):
+	privilaged = False # does current user has privilage to create a new feed
+	user_page = False
+	form = None
+	user = User.query.filter_by(username=username).first_or_404()
+	subscriptions = user.subscriptions.all()
+	events = user.subscribed_events()
+	if current_user.id == user.id:
+		user_page = True
+	if user_page and current_user.type == 'Professor':
+		privilaged = True
+		form = CreateFeedForm()
+		if form.validate_on_submit():
+			feed = Feed(name=form.name.data, owner_id=current_user.id)
+			db.session.add(feed)
+			user.subscribe(feed)
+			db.session.commit()
+			flash('Created a new feed')
+			return redirect(url_for('feeds', username=current_user.username))
+	return render_template('feeds.html', form=form, privilaged=privilaged,
+		user_page=user_page, feeds=subscriptions, events=events)
+
+@app.route('/user/feeds')
+@login_required
+def user_feeds():
+	return redirect(url_for('feeds', username=current_user.username))
+
+@app.route('/user/event')
+@login_required
+def event():
+	user = User.query.filter_by(username=username).first_or_404()
+	subscriptions = user.subscriptions.all()
+	events = user.subscribed_events()
+	form = CreateEventForm()
+	if form.validate_on_submit():
+		feed = Feed(name=form.name.data, owner_id=current_user.id)
+		db.session.add(feed)
+		user.subscribe(feed)
+		db.session.commit()
+		flash('Created a new feed')
+		return redirect(url_for('feeds', username=current_user.username))
+	return render_template('feeds.html', form=form, privilaged=privilaged,
+		user_page=user_page, feeds=subscriptions, events=events)
 
 @app.before_request
 def update_last_seen():

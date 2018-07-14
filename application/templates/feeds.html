@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>ABC University | Feeds</title>
+</head>
+
+<body>
+	<h1>Feeds</h1>
+	<!-- new feed form only displayed for privilaged users -->
+	{% if privilaged %}
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
+		<p>
+			{{ form.name.label }}
+			<br> {{ form.name(size=32) }}
+			<br> {% for error in form.name.errors %}
+			<span style="color: red;">[{{ error }}]</span>
+			{% endfor %}
+		</p>
+		<p>{{ form.submit() }}</p>
+	</form>
+	{% endif %}
+	<!-- table displaying all feeds created and subscribed to
+		y
+	-->
+	<h3>Feeds</h3>
+	<table>
+		{% for feed in feeds %}
+		<tr>
+			<td>{{ feed.name }}</td>
+			<td>
+				<button
+				{% if feed.owner_id == current_user.id %} disabled {% endif %}>
+					Unsubscribe
+				</button>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+	<h3>Events</h3>
+	<table>
+		{% for event in events %}
+		<tr>
+			<td>
+				{{ event.title }}
+			</td>
+			<td>
+				{{ event.id }}
+			</td>
+			<td>
+					{{ event.description }}
+			</td>
+			<td>
+					{{ event.start_day }}
+			</td>
+			<td>
+					{{ event.start_month }}
+			</td>
+			<td>
+					{{ event.end_day }}
+			</td>
+			<td>
+					{{ event.end_month }}
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+</body>
+
+</html>

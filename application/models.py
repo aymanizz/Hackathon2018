@@ -66,8 +66,8 @@ class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	feed_id = db.Column(
 		db.Integer, db.ForeignKey('feed.id'), index=True)
-	title = db.Column(db.String(120), unique=True)
-	description = db.Column(db.String(256), unique=True)
+	title = db.Column(db.String(120))
+	description = db.Column(db.String(256))
 	# YYYY:MM:DD HH:MM:SS
 	start_day = db.Column(db.DateTime, index=True)
 	start_month = db.Column(db.DateTime, index=True)

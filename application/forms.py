@@ -1,17 +1,20 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-	StringField, PasswordField, BooleanField, TextAreaField, SubmitField)
+	StringField, PasswordField, BooleanField, TextAreaField, SubmitField,
+	DateField)
 from wtforms.validators import (
 	DataRequired, Email, EqualTo, ValidationError, Length)
 
 from . import app
 from .models import User, Feed
 
+
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
 	password = PasswordField('Password', validators=[DataRequired()])
 	remember_me = BooleanField('Remember Me')
 	submit = SubmitField('Sign in')
+
 
 class RegistrationForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
@@ -31,6 +34,7 @@ class RegistrationForm(FlaskForm):
 		if user is not None:
 			raise ValidationError('Please use a different email address.')
 
+
 class EditProfileForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
 	about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
@@ -46,11 +50,27 @@ class EditProfileForm(FlaskForm):
 			if user is not None:
 				raise ValidationError('Please use a different username.')
 
+
 class CreateFeedForm(FlaskForm):
-	feed_name = StringField('Feed Name', validators=[DataRequired()])
+	name = StringField('Name', validators=[DataRequired()])
 	submit = SubmitField('Create Feed')
 
-	def validate_feed_name(self, feed_name):
-		feed = Feed.query.filter_by(name=self.feed_name.data).first()
+	def validate_name(self, name):
+		feed = Feed.query.filter_by(name=self.name.data).first()
+		if feed is not None:
+			raise ValidationError('A feed with this name already exists.')
+
+
+class CreateEventForm(FlaskForm):
+	title = StringField('Title',
+		validators=[DataRequired(), Length(max=120)])
+	start_date = DateField('Start Date', validate=[DataRequired()])
+	end_date = DateField('End Date', validators=[DataRequired()])
+	description = StringField('Description',
+		validators=[Length(min=0, max=256)])
+	submit = SubmitField('Create Event')
+
+	def validate_name(self, name):
+		feed = Feed.query.filter_by(name=self.name.data).first()
 		if feed is not None:
 			raise ValidationError('A feed with this name already exists.')
