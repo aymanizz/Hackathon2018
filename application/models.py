@@ -21,7 +21,7 @@ class Feed(db.Model):
 
 class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	type = db.Column(db.Integer)
+	type = db.Column(db.String(10), nullable=False)
 	username = db.Column(db.String(64), index=True, unique=True)
 	email = db.Column(db.String(120), unique=True)
 	password_hash = db.Column(db.String(128))
