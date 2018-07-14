@@ -44,7 +44,7 @@ class User(UserMixin, db.Model):
 			self.subscriptions.append(feed)
 
 	def unsubscribe(self, feed):
-		if self.is_subscribeing(feed):
+		if self.is_subscribed(feed):
 			self.subscriptions.remove(feed)
 
 	def is_subscribed(self, feed):
