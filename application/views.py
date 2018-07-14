@@ -8,7 +8,7 @@ from flask import (
 
 from . import app, db
 from .forms import LoginForm, RegistrationForm, EditProfileForm
-from .models import User
+from .models import User, Feed
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -21,27 +21,6 @@ def load_user(id):
 @app.route('/index/')
 def index():
 	return render_template('index.html')
-
-@app.route('/profile/')
-@login_required
-def profile():
-	return render_template('profile.html', username=current_user.username)
-
-@app.route('/profile/edit', methods=['GET', 'POST'])
-@login_required
-def edit_profile():
-	form = EditProfileForm(current_user.username)
-	if form.validate_on_submit():
-		current_user.username = form.username.data
-		current_user.about_me = form.about_me.data
-		db.session.commit()
-		flash('Your changes have been saved.')
-		return redirect(url_for('edit_profile'))
-	elif request.method == 'GET':
-		form.username.data = current_user.username
-		form.about_me.data = current_user.about_me
-	return render_template(
-		'edit_profile.html', title='Edit Profile', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -87,6 +66,27 @@ def register():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
+
+@app.route('/user/')
+@login_required
+def user(username):
+    return redirect(url_for('user', username=current_user.username))
+
+@app.route('/user/edit', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+	form = EditProfileForm(current_user.username)
+	if form.validate_on_submit():
+		current_user.username = form.username.data
+		current_user.about_me = form.about_me.data
+		db.session.commit()
+		flash('Your changes have been saved.')
+		return redirect(url_for('edit_profile'))
+	elif request.method == 'GET':
+		form.username.data = current_user.username
+		form.about_me.data = current_user.about_me
+	return render_template(
+		'edit_profile.html', title='Edit Profile', form=form)
 
 @app.before_request
 def update_last_seen():
