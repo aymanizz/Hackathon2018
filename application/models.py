@@ -76,17 +76,3 @@ class Event(db.Model):
 
 	def __repr__(self):
 		return "<Event [title: {}, desc: {}]>".format(self.title, self.description)
-
-
-# class Student(db.Model):
-# 	id = db.Column(db.Integer, primary_key=True)
-
-# 	def __repr__(self):
-# 		return '<Student {}>'.format(self.id)
-
-
-# class Professor(db.Model):
-# 	id = db.Column(db.Integer, primary_key=True)
-
-# 	def __repr__(self):
-# 		return '<Professor {}>'.format(self.id)

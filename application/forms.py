@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
 	StringField, PasswordField, BooleanField, TextAreaField, SubmitField,
-	DateField)
+	DateField, SelectField)
 from wtforms.validators import (
 	DataRequired, Email, EqualTo, ValidationError, Length)
 
@@ -68,9 +68,10 @@ class CreateEventForm(FlaskForm):
 	end_date = DateField('End Date', validators=[DataRequired()])
 	description = StringField('Description',
 		validators=[Length(min=0, max=256)])
+	feed = StringField('Add to Feed', validators=[''])
 	submit = SubmitField('Create Event')
 
 	def validate_name(self, name):
-		feed = Feed.query.filter_by(name=self.name.data).first()
+		feed = Feed.query.filter_by(id=self.name.data).first()
 		if feed is not None:
 			raise ValidationError('A feed with this name already exists.')

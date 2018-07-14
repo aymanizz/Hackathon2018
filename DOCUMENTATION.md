@@ -1,5 +1,11 @@
 # Documentation
 
+## Choice of Platform
+
+we chose to build a web platform inorder to reach a bigger audience of
+college students, professors, and the working staff. It also enables us to
+target mobile phone users through the web browser.
+
 ## Requirements
 
 ### Backend Languages, Frameworks and Plugins
@@ -12,8 +18,6 @@
   - Flask-Migrate
   - Flask-SQLAlchemy
   - Jinja2
-- Linux OS: **not mandatory** but you will have to edit the commands in
-  section *Running The Server* to use your OS commands.
 
 ### Frontend Languages, Frameworks and Libraries
 
@@ -23,14 +27,19 @@
 - FullCalendar.js
 - w3css
 
+### Auxiliary
+
+- git
+
 ## Running The Server
 
-1. Error Logging server:
+1. Install all the requirements.
+2. Error Logging server:
   open a terminal and run the following command:
     ```bash
     python3 -m smtpd -n -c DebuggingServer localhost:8025
     ```
-2. Run the server:
+3. Run the server:
   open another terminal and from the project root folder
   (WHEREVER_THE_PROJECT_IS_LOCATED/ABC/) run the following commands:
     ```bash
@@ -41,7 +50,7 @@
     export SQLALCHEMY_DATABASE_URI='/model/database.db'
     flask run
     ```
-3. Open a browser and enter the url: `localhost:5000`
+4. Open a browser and enter the url: `localhost:5000`
 
 ## Main Idea and Concept
 
@@ -54,12 +63,12 @@ Unlike students, professors can create many public feeds, which students
 can subscribe to.
 
 The feeds are delivered in a calendar form, so that students and professors
-can see all upcoming events (announcements, news, etc) from all feeds
-seemlessly.
+can see all upcoming events (announcements, news, etc) from all feeds.
 
 ## Future Work
 
-- private messages
-- public and private feeds
-- forums
-- chatting
+- Front-end
+- Private messages
+- Public and private feeds
+- Forums
+- Chatting
